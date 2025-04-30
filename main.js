@@ -1,5 +1,7 @@
-let data = JSON.parse(localStorage.getItem('data'));
+// 그래프에 넣을 데이터터
+let data = JSON.parse(localStorage.getItem('data') || []);
 
+// 바 차트 렌더링
 function renderBarChart() {
   const barChart = document.getElementById('barChart');
   barChart.innerHTML = '';
@@ -15,6 +17,7 @@ function renderBarChart() {
   });
 }
 
+// 그래프 값 편집 기능
 function renderEditTable() {
   const tbody = document.getElementById('editTableBody');
   tbody.innerHTML = '';
@@ -46,6 +49,7 @@ function renderEditTable() {
   });
 }
 
+// 수정된 값 저장
 function applyEdits() {
   const inputs = document.querySelectorAll('#editTableBody input');
   inputs.forEach(input => {
@@ -56,45 +60,52 @@ function applyEdits() {
   refresh();
 }
 
+// 새 항목에 추가
 function addItem() {
-  const newId = document.getElementById('newId').value.trim();
-  const newValue = document.getElementById('newValue').value.trim();
-  if (newId && newValue) {
-    data.push({ id: newId, value: Number(newValue) });
-    document.getElementById('newId').value = '';
-    document.getElementById('newValue').value = '';
-    saveData();
-    refresh();
-  } else {
-    alert('값을 입력해주세요.');
+  const newIdInput = document.getElementById('newId');
+  const newValueInput = document.getElementById('newValue');
+  const newId = newIdInput.value.trim();
+  const newValue = newValueInput.value.trim();
+  if (!newId || !newValue) {
+    alert('값을 모두 입력해주세요.');
+    return;
   }
+  data.push({ id: newId, value: Number(newValue) });
+  newIdInput.value = '';
+  newValueInput.value = '';
+  saveData();
+  refresh();
 }
 
+//데이터 값 삭제
 function deleteItem(index) {
   data.splice(index, 1);
   saveData();
   refresh();
 }
 
+//JSON을 통한 고급 편집
 function applyJson() {
   try {
     const newData = JSON.parse(document.getElementById('jsonEditor').value);
-    if (Array.isArray(newData)) {
-      data = newData;
-      saveData();
-      refresh();
-    } else {
-      alert('올바르지 않습니다.');
+    if (!Array.isArray(newData)) {
+      alert('배열 형식의 JSON이어야 합니다.');
+      return;
     }
-  } catch (e) {
+    data = newData;
+    saveData();
+    refresh();
+  } catch {
     alert('올바른 형식이 아닙니다.');
   }
 }
 
+//저장된 정보 삭제 방지를 위해해 localStorage 기능 추가
 function saveData() {
   localStorage.setItem('data', JSON.stringify(data));
 }
 
+//리렌더링 기능
 function refresh() {
   renderBarChart();
   renderEditTable();
