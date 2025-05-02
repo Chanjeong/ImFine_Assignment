@@ -8,40 +8,57 @@
   <body>
     <!-- 제목 -->
     <h1>아이엠파인SD팀 지원자 박찬정</h1>
+
     <!-- 그래프 -->
     <div class="bar-container">
       <div class="value-100">100</div>
       <div class="value-0">0</div>
       <div id="barChart" class="bar-chart"></div>
     </div>
+
     <!-- 값 편집 -->
-    <h2>값 편집</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Value</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="editTableBody"></tbody>
-    </table>
-    <button onclick="applyEdits()">Apply</button>
+    <section aria-labelledby="editSection">
+      <h2 id="editSection">값 편집</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Value</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="editTableBody"></tbody>
+      </table>
+      <button id="applyEditsBtn" aria-label="값 편집 적용">Apply</button>
+    </section>
+
     <!-- 값 추가 -->
-    <h2>값 추가</h2>
-    <div class="addContainer">
-      <input type="text" id="newId" placeholder="Enter ID" />
-      <input type="number" id="newValue" placeholder="Enter Value" />
-      <button onclick="addItem()">Add</button>
-    </div>
-    <!-- 값 JSON 편집 -->
-    <h2>값 고급 편집</h2>
-    <textarea
-      id="jsonEditor"
-      rows="10"
-      placeholder='[{"id":0,"value":75}]'></textarea
-    ><br />
-    <button onclick="applyJson()">Apply JSON</button>
+    <section aria-labelledby="addSection">
+      <h2 id="addSection">값 추가</h2>
+      <div class="addContainer">
+        <input type="text" id="newId" placeholder="Enter ID" required />
+        <input
+          type="number"
+          id="newValue"
+          placeholder="Enter Value"
+          required
+          min="0"
+          max="100" />
+        <button id="addItemBtn" aria-label="새 항목 추가">Add</button>
+      </div>
+    </section>
+
+    <!-- JSON 편집 -->
+    <section aria-labelledby="jsonSection">
+      <h2 id="jsonSection">값 고급 편집</h2>
+      <textarea
+        id="jsonEditor"
+        rows="10"
+        placeholder='[{"id":0,"value":75}]'></textarea>
+      <br />
+      <button id="applyJsonBtn" aria-label="JSON 값 적용">Apply JSON</button>
+    </section>
+
     <script src="main.js"></script>
   </body>
 </html>

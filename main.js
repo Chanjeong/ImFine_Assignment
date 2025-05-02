@@ -1,25 +1,36 @@
-// 그래프에 넣을 데이터터
-let data = JSON.parse(localStorage.getItem('data') || []);
+// DOM 요소 캐싱
+const barChart = document.getElementById('barChart');
+const tbody = document.getElementById('editTableBody');
+const newIdInput = document.getElementById('newId');
+const newValueInput = document.getElementById('newValue');
+const jsonEditor = document.getElementById('jsonEditor');
+// 이벤트 리스너 등록
+document.getElementById('applyEditsBtn').addEventListener('click', applyEdits);
+document.getElementById('addItemBtn').addEventListener('click', addItem);
+document.getElementById('applyJsonBtn').addEventListener('click', applyJson);
 
-// 바 차트 렌더링
+//  데이터 초기화
+let data = JSON.parse(localStorage.getItem('data') || '[]');
+
+//  바 차트 렌더링
 function renderBarChart() {
-  const barChart = document.getElementById('barChart');
   barChart.innerHTML = '';
   data.forEach(item => {
     const bar = document.createElement('div');
     bar.className = 'bar';
     bar.style.height = item.value * 3 + 'px';
+
     const value = document.createElement('div');
     value.className = 'bar-value';
     value.innerText = item.id;
+
     bar.appendChild(value);
     barChart.appendChild(bar);
   });
 }
 
-// 그래프 값 편집 기능
+// 편집 테이블 렌더링
 function renderEditTable() {
-  const tbody = document.getElementById('editTableBody');
   tbody.innerHTML = '';
   data.forEach((item, index) => {
     const tr = document.createElement('tr');
@@ -49,7 +60,60 @@ function renderEditTable() {
   });
 }
 
-// 수정된 값 저장
+// JSON 에디터 동기화
+function updateJsonEditor() {
+  jsonEditor.value = JSON.stringify(data, null, 2);
+}
+
+// 데이터 저장
+function saveData() {
+  localStorage.setItem('data', JSON.stringify(data));
+}
+
+// 전체 리렌더링
+function refresh() {
+  renderBarChart();
+  renderEditTable();
+  updateJsonEditor();
+}
+
+// 새 항목 추가
+function addItem() {
+  const newId = newIdInput.value.trim();
+  const newValue = newValueInput.value.trim();
+
+  if (!newId || newValue === '') {
+    alert('ID와 값을 모두 입력해주세요.');
+    return;
+  }
+
+  if (isNaN(newValue)) {
+    alert('값은 숫자여야 합니다.');
+    return;
+  }
+
+  if (data.some(item => item.id === newId)) {
+    alert('이미 존재하는 ID입니다.');
+    return;
+  }
+
+  data.push({ id: newId, value: Number(newValue) });
+  newIdInput.value = '';
+  newValueInput.value = '';
+  saveData();
+  refresh();
+}
+
+// 항목 삭제
+function deleteItem(index) {
+  if (confirm('정말 삭제하시겠습니까?')) {
+    data.splice(index, 1);
+    saveData();
+    refresh();
+  }
+}
+
+// 편집 적용
 function applyEdits() {
   const inputs = document.querySelectorAll('#editTableBody input');
   inputs.forEach(input => {
@@ -60,34 +124,10 @@ function applyEdits() {
   refresh();
 }
 
-// 새 항목에 추가
-function addItem() {
-  const newIdInput = document.getElementById('newId');
-  const newValueInput = document.getElementById('newValue');
-  const newId = newIdInput.value.trim();
-  const newValue = newValueInput.value.trim();
-  if (!newId || !newValue) {
-    alert('값을 모두 입력해주세요.');
-    return;
-  }
-  data.push({ id: newId, value: Number(newValue) });
-  newIdInput.value = '';
-  newValueInput.value = '';
-  saveData();
-  refresh();
-}
-
-//데이터 값 삭제
-function deleteItem(index) {
-  data.splice(index, 1);
-  saveData();
-  refresh();
-}
-
-//JSON을 통한 고급 편집
+// JSON 직접 적용
 function applyJson() {
   try {
-    const newData = JSON.parse(document.getElementById('jsonEditor').value);
+    const newData = JSON.parse(jsonEditor.value);
     if (!Array.isArray(newData)) {
       alert('배열 형식의 JSON이어야 합니다.');
       return;
@@ -96,20 +136,9 @@ function applyJson() {
     saveData();
     refresh();
   } catch {
-    alert('올바른 형식이 아닙니다.');
+    alert('올바른 형식의 JSON이 아닙니다.');
   }
 }
 
-//저장된 정보 삭제 방지를 위해해 localStorage 기능 추가
-function saveData() {
-  localStorage.setItem('data', JSON.stringify(data));
-}
-
-//리렌더링 기능
-function refresh() {
-  renderBarChart();
-  renderEditTable();
-  document.getElementById('jsonEditor').value = JSON.stringify(data, null, 2);
-}
-
+// 초기 렌더링
 refresh();

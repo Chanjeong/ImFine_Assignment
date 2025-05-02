@@ -7,6 +7,7 @@
   --primary-button-bg: #ccc;
   --delete-button-color: red;
 }
+
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
@@ -41,8 +42,9 @@ body {
 }
 .bar-value {
   position: absolute;
-  bottom: -20px;
-  left: 5px;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 15px;
   color: var(--primary-text);
 }
@@ -97,6 +99,10 @@ button {
 button:hover {
   background-color: var(--primary-hover-bg);
 }
+button:active {
+  transform: scale(0.98);
+  background-color: #bbb;
+}
 .delete-button {
   background-color: transparent;
   color: var(--delete-button-color);
@@ -105,8 +111,9 @@ button:hover {
   background-color: transparent;
 }
 .addContainer {
-  display: grid;
-  grid-template-columns: 1fr 7fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 #newId,
 #newValue {
@@ -116,4 +123,20 @@ button:hover {
   width: 80%;
   background-color: transparent;
   padding: 5px;
+}
+
+/* 좁은 화면에서 레이아웃 붕괴 방지 */
+@media (max-width: 600px) {
+  .bar-chart {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 5px;
+  }
+
+  table,
+  textarea,
+  input[type='text'],
+  input[type='number'] {
+    width: 100%;
+  }
 }
